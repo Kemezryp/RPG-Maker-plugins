@@ -1,0 +1,2 @@
+All my scripts and plugins are free to use in both commercial and non-commercial games and don't require credits (but they are welcome!).
+If any script/plugin includes a contribution from a third person, make sure to include them as well.
