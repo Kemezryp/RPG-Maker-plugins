@@ -1,7 +1,7 @@
 /*:
- * @plugindesc [1.0] A set of fixes for Core plugins by Yanfly.
+ * @plugindesc [1.1] A set of fixes for Core plugins by Yanfly.
  * Place under YEP_BattleEngineCore.js
- * @author Kemezryp, Caethyril
+ * @author Kemezryp
  *
  * @param Optimize Target Selection
  * @desc [CoreEngine] Use .setBlendColor() instead of .startEffect() when targetting enemies. Improves performance.
@@ -65,10 +65,18 @@
  * adds them back with fixed, default timing.
  *
  * ============================================================================
+ * Changelog
+ * ============================================================================
+ *
+ * 1.1 - Fixed a bug for Cannot Move States Fix, causing states with Action End
+ * without move restriction going down by 2 instead of 1.
+ *
+ * 1.0 - Released.
+ *
+ * ============================================================================
  * Terms of Use
  * ============================================================================
  * These fixes are just simple edits. Credits are nice but not required. :)
- * If you decide to give me credits, remember to include Caethyril as well!
  *
  */
 
@@ -83,7 +91,7 @@ Keme.Param.CannotMoveFix = eval(Keme.Parameters['Cannot Move States Fix']);
 Keme.Param.FrontViewFix = eval(Keme.Parameters['Front View Delay Fix']);
 Keme.Param.EnemyAttackAnimation = eval(Keme.Parameters['Reimplement Enemy Animation']);
 
-// === Optimize Target Selection (by Kemezryp) ===
+// === Optimize Target Selection ===
 
 if(Keme.Param.OptimizeSelection && Imported.YEP_CoreEngine && !Yanfly.Param.FlashTarget) {
 Sprite_Battler.prototype.updateSelectionEffect = function() {
@@ -99,17 +107,16 @@ Sprite_Battler.prototype.updateSelectionEffect = function() {
 };
 };
 
-// === Cannot Move States Fix (by caethyril) ===
-
+// === Cannot Move States Fix ===
 if(Keme.Param.CannotMoveFix && Imported.YEP_BattleEngineCore) {
-_Game_Battler_onAllActionsEnd = Game_Battler.prototype.onAllActionsEnd;
-Game_Battler.prototype.onAllActionsEnd = function() {
-    _Game_Battler_onAllActionsEnd.call(this);
-    this.updateStateActionEnd();
-};
+    Game_Battler.prototype.onAllActionsEnd = function() {
+        Yanfly.BEC.Game_Battler_onAllActionsEnd.call(this);
+    if (!BattleManager._processTurn || !this.canMove()) this.updateStateActionEnd();
+    };
 };
 
-// === Front View Delay Fix (by Kemezryp) ===
+
+// === Front View Delay Fix ===
 
 if(Keme.Param.FrontViewFix && Imported.YEP_BattleEngineCore) {
 Yanfly.BEC.DefaultActionSetup = [
